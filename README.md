@@ -1,16 +1,17 @@
 # Surface_Detection
 
-![sd_image]()
+ANN model has been developed to make automatic surface scan. Our goal is to develop ANN that decides whether there is a tissue surface in the input image. If the input image contains the tissue surface, it returns 1 value.  
+Also, this repo is a reference for testing Keras model weights (file with .h5 extension) using C ++. Dense, Conv2D, MaxPooling2D, Flatten, BatchNormalization layers used in Keras library; ReLU, Sigmoid (0-1 range) activation functions are coded using C ++.
 
-ANN model has been developed to make automatic surface scan. Our goal is to develop ANN that decides whether there is a tissue surface in the input image. If the input image contains the tissue surface, it returns 1 value. Also, this repo is a reference for testing Keras model weights (file with .h5 extension) using C ++. Dense, BatchNormalization layers used in Keras library; ReLU, Sigmoid (0-1 range) activation functions are coded using C ++.
+![sd_image](https://github.com/fbasatemur/Surface_Detection/blob/main/docs/sd_detector.jpg)
 
 ## Model Design
 
-![sd_model]()
+![sd_model](https://github.com/fbasatemur/Surface_Detection/blob/main/docs/sd_design.jpg)
 
 Keras model consists of Convolution, MaxPooling, Flatten, Dense and Batch Normalization layers. The model takes the of RGB image 512x512x3 from the input. Output Layer consists of 1 neuron and returns range of (0-1).
 
-```
+```ini
 inputImage = new CpuMat(512, 512, 3, false);    // Dense(input_image.Height, input_image.Width, input_image.Depth, useBias = false)
 
 conv = new Conv2D(8, 3, 3, inputImage);                     // Conv2D(number of filters, filter_height, filter_width, inputImage)
@@ -25,7 +26,7 @@ dense1 = new Dense(1, dense->Result->Rows, dense->Result->Cols, false);   // Yea
 
 Then the weights of each layers are loaded. For example 10X scale model weights:
 
-```
+```ini
 std::string weightFolder = "..\\database\\model_save_10X_BGR\\"
 
 std::string conv2DKernel = weightFolder + "conv2d\\kernel.txt";
@@ -60,7 +61,7 @@ batchNorm->load(batchNormBeta, batchNormGamma, batchNormMovingMean, batchNormMov
 The image to be tested must be set to the InputImage-> CpuP pointer.  
 Then, each layer is applied to inputImage.
 
-```
+```ini
 conv->apply(inputImage);
 cpuRelu(conv->Result);            // apply ReLU activation
 maxPool->apply(conv->Result);
@@ -81,7 +82,7 @@ cpuSigmoid(dense1->Result);      // apply Sigmoid (Unipolar) activation
 
 Finally the predict value is read from pointer CpuP of end layer.
 
-```
+```ini
 predict = (float*)dense1->Result->CpuP;
 ```
 
